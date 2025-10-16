@@ -20,5 +20,15 @@ public class PlataformaMovible : MonoBehaviour
         {
             target = target == PuntoB.position ? PuntoA.position : PuntoB.position;
         }
+
+        if (target == PuntoA.position)
+        {
+            speed = 10.0f;
+        }
+        else
+        {
+            speed = 1.0f;
+        }
+
     }
 }
