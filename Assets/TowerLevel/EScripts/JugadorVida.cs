@@ -1,32 +1,45 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JugadorVida : MonoBehaviour
 {
+    [SerializeField] private PlayerController player;
+    [SerializeField] private TextMeshProUGUI VidaText;
+    [SerializeField] private Slider VidaSlider;
+
     private int maxVida = 100;
     private int VidaActual;
-    private bool estaMuerto = false; 
+
+    void Awake()
+    {
+        if (!VidaText) VidaText = GetComponent<TextMeshProUGUI>();
+        if (!VidaSlider) VidaSlider = GetComponent<Slider>();
+    }
     private void Start()
     {
         VidaActual = maxVida;
+        VidaSlider.value = VidaActual;
     }
     public void TakeDamage(int cantidad)
     {
-        if (estaMuerto) return;
         VidaActual -= cantidad; 
         VidaActual = Mathf.Max(VidaActual, 0);
 
+        if (VidaText) VidaText.text = VidaActual.ToString();
+        if (VidaSlider) VidaSlider.value = VidaActual;
 
-
-        Debug.Log("Vida Actual: " + VidaActual);
         if(VidaActual <= 0)
         {
-            Die();
+            Aparecer();
         }
     }
-    public void Die()
+    public void Aparecer()
     {
-        estaMuerto = true;
         Debug.Log("El jugador ha muerto");
-        gameObject.SetActive(false);
+        VidaActual = maxVida;
+        VidaSlider.value = maxVida;
+        VidaText.text = VidaActual.ToString();
+        player.Respawn();
     }
 }
