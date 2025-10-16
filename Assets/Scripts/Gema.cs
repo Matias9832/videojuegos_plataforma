@@ -12,6 +12,9 @@ public class Gema : MonoBehaviour
         if (!animator) animator = GetComponent<Animator>();
         if (!triggerCol) triggerCol = GetComponentInChildren<Collider>();
         if (!audioSourcePick) audioSourcePick = GetComponent<AudioSource>();
+        audioSourcePick.playOnAwake = false;
+        audioSourcePick.loop = false;
+        audioSourcePick.Stop();
     }
 
     void Start()

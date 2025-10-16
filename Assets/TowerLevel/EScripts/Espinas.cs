@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Espinas : MonoBehaviour
 {
-    private int daño = 20;
+    private int daño = 10;
     private float tiempo = 1f;
 
     private float tiempoultimodaño;

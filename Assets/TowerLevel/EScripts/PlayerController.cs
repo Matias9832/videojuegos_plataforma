@@ -1,41 +1,78 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI coinText;
-    [Header("Monedas")]
-    public int contadorCoin;
+    [SerializeField] private TextMeshProUGUI gemText;
+
+    [Header("Gemas")]
+    public int contadorGem;
 
     [Header("Spawn")]
-    [SerializeField] private Transform spawnPoint; // referencia al spawn
+    [SerializeField] private Transform spawnPoint;
     private Vector3 defaultSpawn = Vector3.zero;
+
+    CharacterController cc;
+    Rigidbody rb;
+    NavMeshAgent agent;
 
     void Awake()
     {
-        if (!coinText) coinText = GetComponent<TextMeshProUGUI>();
-        if (spawnPoint != null)
-            transform.position = spawnPoint.position;
-        else
-            transform.position = defaultSpawn;
+        cc = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
+        agent = GetComponent<NavMeshAgent>();
+    }
+
+    void Start()
+    {
+        Respawn();
+        if (gemText) gemText.text = contadorGem.ToString();
     }
 
     public void AddCoins(int amount = 1)
     {
-        contadorCoin += amount;
-        coinText.text = contadorCoin.ToString();
+        contadorGem += amount;
+        if (gemText) gemText.text = contadorGem.ToString();
     }
 
     public void Respawn()
     {
-        if (spawnPoint != null)
-            transform.position = spawnPoint.position;
-        else
-            transform.position = defaultSpawn;
+        Vector3 pos = spawnPoint ? spawnPoint.position : defaultSpawn;
+
+        if (agent)
+        {
+            agent.Warp(pos);
+            agent.ResetPath();
+            return;
+        }
+
+        if (cc)
+        {
+            StartCoroutine(CCRespawn(pos));
+            return;
+        }
+
+        if (rb)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.position = pos;
+            rb.Sleep();
+            return;
+        }
+
+        transform.position = pos;
     }
 
-    public void SetSpawn(Transform newSpawn)
+    IEnumerator CCRespawn(Vector3 pos)
     {
-        spawnPoint = newSpawn;
+        cc.enabled = false;
+        transform.position = pos;
+        yield return null;
+        cc.enabled = true;
     }
+
+    public void SetSpawn(Transform newSpawn) => spawnPoint = newSpawn;
 }
